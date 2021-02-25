@@ -14,6 +14,17 @@ class RealmFeedStore: FeedStore {
 	}
 	
 	func deleteCachedFeed(completion: @escaping DeletionCompletion) {
+		do {
+			let confObject = realm.objects(RealmFeedCache.self).first
+			if let conf = confObject {
+				try realm.write {
+					realm.delete(conf)
+				}
+			}
+			completion(nil)
+		} catch {
+			
+		}
 		
 	}
 	
@@ -144,9 +155,9 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 	}
 	
 	func test_delete_deliversNoErrorOnEmptyCache() throws {
-//		let sut = try makeSUT()
-//
-//		assertThatDeleteDeliversNoErrorOnEmptyCache(on: sut)
+		let sut = try makeSUT()
+
+		assertThatDeleteDeliversNoErrorOnEmptyCache(on: sut)
 	}
 	
 	func test_delete_hasNoSideEffectsOnEmptyCache() throws {
