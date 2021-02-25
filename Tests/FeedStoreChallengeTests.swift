@@ -4,18 +4,81 @@
 
 import XCTest
 import FeedStoreChallenge
+import RealmSwift
 
 class RealmFeedStore: FeedStore {
+	private let realm: Realm
+		
+	init(realm: Realm) {
+		self.realm = realm
+	}
+	
 	func deleteCachedFeed(completion: @escaping DeletionCompletion) {
 		
 	}
 	
 	func insert(_ feed: [LocalFeedImage], timestamp: Date, completion: @escaping InsertionCompletion) {
-		
+		do {
+			try realm.write {
+				let feed = feed.map { RealmFeedImage(id: $0.id,
+													 description: $0.description,
+													 location: $0.location,
+													 url: $0.url)
+				}
+				let realmConf = RealmFeedCache(feed: feed, timestamp: timestamp)
+				realm.add(realmConf as Object)
+			}
+			completion(nil)
+		} catch {
+			completion(error)
+		}
 	}
 	
 	func retrieve(completion: @escaping RetrievalCompletion) {
-		completion(.empty)
+		let realmObject = realm.objects(RealmFeedCache.self).first
+		if let conf = realmObject {
+			let feed = conf.realmFeedtoLocals()
+			completion(.found(feed: feed, timestamp: conf.timestamp))
+		} else {
+			completion(.empty)
+		}
+	}
+}
+
+class RealmFeedImage: Object {
+	@objc dynamic var id: String = ""
+	@objc dynamic var rDescription: String? = nil
+	@objc dynamic var location: String? = nil
+	@objc dynamic var url: String = ""
+	
+	convenience init(id: UUID, description: String?, location: String?, url: URL) {
+		self.init()
+		self.id = id.uuidString
+		self.rDescription = description
+		self.location = location
+		self.url = url.absoluteString
+	}
+	
+	func toLocal() -> LocalFeedImage {
+		return LocalFeedImage(id: UUID(uuidString: self.id)!,
+							  description: self.rDescription,
+							  location: self.location,
+							  url: URL(string: self.url)!)
+	}
+}
+
+class RealmFeedCache: Object {
+	var feed = List<RealmFeedImage>()
+	@objc dynamic var timestamp = Date()
+	
+	convenience init(feed: [RealmFeedImage], timestamp: Date) {
+		self.init()
+		self.feed.append(objectsIn: feed)
+		self.timestamp = timestamp
+	}
+	
+	func realmFeedtoLocals() -> [LocalFeedImage] {
+		self.feed.map { $0.toLocal() }
 	}
 }
 
@@ -46,9 +109,9 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 	}
 	
 	func test_retrieve_deliversFoundValuesOnNonEmptyCache() throws {
-//		let sut = try makeSUT()
-//
-//		assertThatRetrieveDeliversFoundValuesOnNonEmptyCache(on: sut)
+		let sut = try makeSUT()
+
+		assertThatRetrieveDeliversFoundValuesOnNonEmptyCache(on: sut)
 	}
 	
 	func test_retrieve_hasNoSideEffectsOnNonEmptyCache() throws {
@@ -108,9 +171,14 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 	// - MARK: Helpers
 	
 	private func makeSUT() throws -> FeedStore {
-		let sut = RealmFeedStore()
+		let sut = RealmFeedStore(realm: testRealmInstance())
 		return sut
 	}
+	
+	private func testRealmInstance() -> Realm {
+		try! Realm(configuration: Realm.Configuration(inMemoryIdentifier: "\(type(of: self))Realm"))
+	}
+
 	
 }
 
