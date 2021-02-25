@@ -26,7 +26,7 @@ class RealmFeedStore: FeedStore {
 													 url: $0.url)
 				}
 				let realmConf = RealmFeedCache(feed: feed, timestamp: timestamp)
-				realm.add(realmConf as Object)
+				realm.add(realmConf as Object, update: .modified)
 			}
 			completion(nil)
 		} catch {
@@ -68,8 +68,13 @@ class RealmFeedImage: Object {
 }
 
 class RealmFeedCache: Object {
+	@objc dynamic var id = 0
 	var feed = List<RealmFeedImage>()
 	@objc dynamic var timestamp = Date()
+	
+	override static func primaryKey() -> String? {
+		return "id"
+	}
 	
 	convenience init(feed: [RealmFeedImage], timestamp: Date) {
 		self.init()
@@ -133,9 +138,9 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 	}
 	
 	func test_insert_overridesPreviouslyInsertedCacheValues() throws {
-//		let sut = try makeSUT()
-//
-//		assertThatInsertOverridesPreviouslyInsertedCacheValues(on: sut)
+		let sut = try makeSUT()
+
+		assertThatInsertOverridesPreviouslyInsertedCacheValues(on: sut)
 	}
 	
 	func test_delete_deliversNoErrorOnEmptyCache() throws {
