@@ -7,14 +7,15 @@ import FeedStoreChallenge
 import RealmSwift
 
 class RealmFeedStore: FeedStore {
-	private let realm: Realm
+	private let configuration: Realm.Configuration
 		
-	init(realm: Realm) {
-		self.realm = realm
+	init(configuration: Realm.Configuration) {
+		self.configuration = configuration
 	}
 	
 	func deleteCachedFeed(completion: @escaping DeletionCompletion) {
 		do {
+			let realm = try Realm(configuration: self.configuration)
 			let confObject = realm.objects(RealmFeedCache.self).first
 			if let conf = confObject {
 				try realm.write {
@@ -25,11 +26,11 @@ class RealmFeedStore: FeedStore {
 		} catch {
 			
 		}
-		
 	}
 	
 	func insert(_ feed: [LocalFeedImage], timestamp: Date, completion: @escaping InsertionCompletion) {
 		do {
+			let realm = try Realm(configuration: self.configuration)
 			try realm.write {
 				let feed = feed.map { RealmFeedImage(id: $0.id,
 													 description: $0.description,
@@ -46,6 +47,10 @@ class RealmFeedStore: FeedStore {
 	}
 	
 	func retrieve(completion: @escaping RetrievalCompletion) {
+		guard let realm = try? Realm(configuration: self.configuration) else {
+			return completion(.empty)
+		}
+		
 		let realmObject = realm.objects(RealmFeedCache.self).first
 		if let conf = realmObject {
 			let feed = conf.realmFeedtoLocals()
@@ -186,16 +191,28 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 	
 	// - MARK: Helpers
 	
-	private func makeSUT() throws -> FeedStore {
-		let sut = RealmFeedStore(realm: testRealmInstance())
+	private func makeSUT(configuration: Realm.Configuration? = nil) throws -> FeedStore {
+		let sut = RealmFeedStore(configuration: configuration ?? testRealmConfiguration())
 		return sut
 	}
 	
-	private func testRealmInstance() -> Realm {
-		try! Realm(configuration: Realm.Configuration(inMemoryIdentifier: "\(type(of: self))Realm"))
+	private func testRealmConfiguration() -> Realm.Configuration {
+		Realm.Configuration(inMemoryIdentifier: "\(type(of: self))Realm")
 	}
-
+		
+	private func cacheWithInvalidImage() -> RealmFeedCache {
+		let invalidImage = RealmFeedImage(value: ["id": "invalidUUID", "desc": nil, "location": nil, "url": "invalidURL"])
+		return RealmFeedCache(value: ["feed": [invalidImage], "timestamp": Date()])
+	}
 	
+//	private func insertCacheWithInvalidImageIntoRealm() {
+//		let realmInstance = autoreleasepool {
+//			return testRealmInstance()
+//		}
+//		try! realmInstance.write {
+//			realmInstance.add(cacheWithInvalidImage())
+//		}
+//	}
 }
 
 //  ***********************
