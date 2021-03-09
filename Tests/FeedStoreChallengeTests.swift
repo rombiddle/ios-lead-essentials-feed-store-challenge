@@ -58,21 +58,21 @@ class RealmFeedStore: FeedStore {
 
 class RealmFeedImage: Object {
 	@objc dynamic var id: String = ""
-	@objc dynamic var rDescription: String? = nil
+	@objc dynamic var desc: String? = nil
 	@objc dynamic var location: String? = nil
 	@objc dynamic var url: String = ""
 	
 	convenience init(id: UUID, description: String?, location: String?, url: URL) {
 		self.init()
 		self.id = id.uuidString
-		self.rDescription = description
+		self.desc = description
 		self.location = location
 		self.url = url.absoluteString
 	}
 	
 	func toLocal() -> LocalFeedImage {
 		return LocalFeedImage(id: UUID(uuidString: self.id)!,
-							  description: self.rDescription,
+							  description: self.desc,
 							  location: self.location,
 							  url: URL(string: self.url)!)
 	}
