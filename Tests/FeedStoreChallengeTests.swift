@@ -51,13 +51,18 @@ class RealmFeedStore: FeedStore {
 			return completion(.empty)
 		}
 		
-		let realmObject = realm.objects(RealmFeedCache.self).first
-		if let conf = realmObject {
-			let feed = conf.realmFeedtoLocals()
-			completion(.found(feed: feed, timestamp: conf.timestamp))
-		} else {
-			completion(.empty)
+		do {
+			let realmObject = realm.objects(RealmFeedCache.self).first
+			if let conf = realmObject {
+				let feed = try conf.realmFeedtoLocals()
+				completion(.found(feed: feed, timestamp: conf.timestamp))
+			} else {
+				completion(.empty)
+			}
+		} catch {
+			completion(.failure(error))
 		}
+		
 	}
 }
 
@@ -75,11 +80,15 @@ class RealmFeedImage: Object {
 		self.url = url.absoluteString
 	}
 	
-	func toLocal() -> LocalFeedImage {
-		return LocalFeedImage(id: UUID(uuidString: self.id)!,
+	func toLocal() throws -> LocalFeedImage {
+		guard let uuid = UUID(uuidString: self.id), let url = URL(string: self.url) else {
+			throw NSError(domain: "any error", code: 0)
+		}
+		
+		return LocalFeedImage(id: uuid,
 							  description: self.desc,
 							  location: self.location,
-							  url: URL(string: self.url)!)
+							  url: url)
 	}
 }
 
@@ -98,8 +107,8 @@ class RealmFeedCache: Object {
 		self.timestamp = timestamp
 	}
 	
-	func realmFeedtoLocals() -> [LocalFeedImage] {
-		self.feed.map { $0.toLocal() }
+	func realmFeedtoLocals() throws -> [LocalFeedImage] {
+		try self.feed.map { try $0.toLocal() }
 	}
 }
 
@@ -204,14 +213,13 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 		return RealmFeedCache(value: ["feed": [invalidImage], "timestamp": Date()])
 	}
 	
-//	private func insertCacheWithInvalidImageIntoRealm() {
-//		let realmInstance = autoreleasepool {
-//			return testRealmInstance()
-//		}
-//		try! realmInstance.write {
-//			realmInstance.add(cacheWithInvalidImage())
-//		}
-//	}
+	private func insertCacheWithInvalidImageIntoRealm() {
+		let realm = try! Realm(configuration: testRealmConfiguration())
+		
+		try! realm.write {
+			realm.add(cacheWithInvalidImage())
+		}
+	}
 }
 
 //  ***********************
@@ -222,21 +230,23 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 //
 //  ***********************
 
-//extension FeedStoreChallengeTests: FailableRetrieveFeedStoreSpecs {
+extension FeedStoreChallengeTests: FailableRetrieveFeedStoreSpecs {
+
+	func test_retrieve_deliversFailureOnRetrievalError() throws {
+		let sut = try makeSUT()
+		
+		insertCacheWithInvalidImageIntoRealm()
+
+		assertThatRetrieveDeliversFailureOnRetrievalError(on: sut)
+	}
+
+	func test_retrieve_hasNoSideEffectsOnFailure() throws {
+//		let sut = try makeSUT()
 //
-//	func test_retrieve_deliversFailureOnRetrievalError() throws {
-////		let sut = try makeSUT()
-////
-////		assertThatRetrieveDeliversFailureOnRetrievalError(on: sut)
-//	}
-//
-//	func test_retrieve_hasNoSideEffectsOnFailure() throws {
-////		let sut = try makeSUT()
-////
-////		assertThatRetrieveHasNoSideEffectsOnFailure(on: sut)
-//	}
-//
-//}
+//		assertThatRetrieveHasNoSideEffectsOnFailure(on: sut)
+	}
+
+}
 
 extension FeedStoreChallengeTests: FailableInsertFeedStoreSpecs {
 
