@@ -192,14 +192,13 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 	// - MARK: Helpers
 	
 	private func makeSUT(configuration: Realm.Configuration? = nil) throws -> FeedStore {
-		let sut = RealmFeedStore(configuration: configuration ?? testRealmConfiguration())
-		return sut
+		RealmFeedStore(configuration: configuration ?? testRealmConfiguration())
 	}
 	
 	private func testRealmConfiguration() -> Realm.Configuration {
 		Realm.Configuration(inMemoryIdentifier: "\(type(of: self))Realm")
 	}
-		
+			
 	private func cacheWithInvalidImage() -> RealmFeedCache {
 		let invalidImage = RealmFeedImage(value: ["id": "invalidUUID", "desc": nil, "location": nil, "url": "invalidURL"])
 		return RealmFeedCache(value: ["feed": [invalidImage], "timestamp": Date()])
