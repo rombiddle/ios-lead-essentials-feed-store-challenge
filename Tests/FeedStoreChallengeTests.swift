@@ -241,9 +241,11 @@ extension FeedStoreChallengeTests: FailableRetrieveFeedStoreSpecs {
 	}
 
 	func test_retrieve_hasNoSideEffectsOnFailure() throws {
-//		let sut = try makeSUT()
-//
-//		assertThatRetrieveHasNoSideEffectsOnFailure(on: sut)
+		let sut = try makeSUT()
+		
+		insertCacheWithInvalidImageIntoRealm()
+
+		assertThatRetrieveHasNoSideEffectsOnFailure(on: sut)
 	}
 
 }
