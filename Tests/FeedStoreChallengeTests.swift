@@ -195,8 +195,8 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 		RealmFeedStore(configuration: configuration ?? testRealmConfiguration())
 	}
 	
-	private func testRealmConfiguration() -> Realm.Configuration {
-		Realm.Configuration(inMemoryIdentifier: "\(type(of: self))Realm")
+	private func testRealmConfiguration(readOnly: Bool = false) -> Realm.Configuration {
+		Realm.Configuration(inMemoryIdentifier: "\(type(of: self))Realm", readOnly: readOnly)
 	}
 			
 	private func cacheWithInvalidImage() -> RealmFeedCache {
@@ -241,16 +241,14 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 extension FeedStoreChallengeTests: FailableInsertFeedStoreSpecs {
 
 	func test_insert_deliversErrorOnInsertionError() throws {
-		var conf = testRealmConfiguration()
-		conf.readOnly = true
+		let conf = testRealmConfiguration(readOnly: true)
 		let sut = try makeSUT(configuration: conf)
 
 		assertThatInsertDeliversErrorOnInsertionError(on: sut)
 	}
 
 	func test_insert_hasNoSideEffectsOnInsertionError() throws {
-		var conf = testRealmConfiguration()
-		conf.readOnly = true
+		let conf = testRealmConfiguration(readOnly: true)
 		let sut = try makeSUT(configuration: conf)
 
 		assertThatInsertHasNoSideEffectsOnInsertionError(on: sut)
