@@ -24,7 +24,7 @@ class RealmFeedStore: FeedStore {
 			}
 			completion(nil)
 		} catch {
-			
+			completion(error)
 		}
 	}
 	
@@ -268,18 +268,20 @@ extension FeedStoreChallengeTests: FailableInsertFeedStoreSpecs {
 
 }
 
-//extension FeedStoreChallengeTests: FailableDeleteFeedStoreSpecs {
-//
-//	func test_delete_deliversErrorOnDeletionError() throws {
-////		let sut = try makeSUT()
-////
-////		assertThatDeleteDeliversErrorOnDeletionError(on: sut)
-//	}
-//
-//	func test_delete_hasNoSideEffectsOnDeletionError() throws {
-////		let sut = try makeSUT()
-////
-////		assertThatDeleteHasNoSideEffectsOnDeletionError(on: sut)
-//	}
-//
-//}
+extension FeedStoreChallengeTests: FailableDeleteFeedStoreSpecs {
+
+	func test_delete_deliversErrorOnDeletionError() throws {
+		let conf = testRealmConfiguration(readOnly: true)
+		let sut = try makeSUT(configuration: conf)
+
+		assertThatDeleteDeliversErrorOnDeletionError(on: sut)
+	}
+
+	func test_delete_hasNoSideEffectsOnDeletionError() throws {
+		let conf = testRealmConfiguration(readOnly: true)
+		let sut = try makeSUT(configuration: conf)
+
+		assertThatDeleteHasNoSideEffectsOnDeletionError(on: sut)
+	}
+
+}
