@@ -25,7 +25,7 @@ public class RealmFeedImage: Object {
 	
 	public func toLocal() throws -> LocalFeedImage {
 		guard let uuid = UUID(uuidString: self.id), let url = URL(string: self.url) else {
-			throw NSError(domain: "any error", code: 0)
+			throw InvalidFeedImageData()
 		}
 		
 		return LocalFeedImage(id: uuid,
@@ -33,4 +33,6 @@ public class RealmFeedImage: Object {
 							  location: self.location,
 							  url: url)
 	}
+	
+	private struct InvalidFeedImageData: Error {}
 }
