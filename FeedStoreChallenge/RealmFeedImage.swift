@@ -34,5 +34,5 @@ public class RealmFeedImage: Object {
 							  url: url)
 	}
 	
-	private struct InvalidFeedImageData: Error {}
+	struct InvalidFeedImageData: Error {}
 }
