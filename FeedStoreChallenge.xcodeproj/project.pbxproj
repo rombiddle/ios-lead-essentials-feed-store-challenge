@@ -55,9 +55,6 @@
 		25253A8C25F7F0CC0069485D /* RealmFeedImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmFeedImage.swift; sourceTree = "<group>"; };
 		25253A9025F7F0ED0069485D /* RealmFeedCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmFeedCache.swift; sourceTree = "<group>"; };
 		25253A9B25F800860069485D /* XCTestCaseHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTestCaseHelpers.swift; sourceTree = "<group>"; };
-		259ECD3C25E6851000E3F4BA /* RealmSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		259ECD4125E6855200E3F4BA /* Realm.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Realm.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		259ECD4225E6855200E3F4BA /* RealmSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,7 +84,6 @@
 				08CE2B8D2285BBD100183A1B /* FeedStoreChallenge */,
 				08CE2B982285BBD100183A1B /* Tests */,
 				08CE2B8C2285BBD100183A1B /* Products */,
-				8324E27BD8F0F3173FF8DCB7 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 			usesTabs = 1;
@@ -145,16 +141,6 @@
 				25253A9B25F800860069485D /* XCTestCaseHelpers.swift */,
 			);
 			path = Helpers;
-			sourceTree = "<group>";
-		};
-		8324E27BD8F0F3173FF8DCB7 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				259ECD4125E6855200E3F4BA /* Realm.framework */,
-				259ECD4225E6855200E3F4BA /* RealmSwift.framework */,
-				259ECD3C25E6851000E3F4BA /* RealmSwift.framework */,
-			);
-			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
