@@ -18,13 +18,13 @@ public class RealmFeedCache: Object {
 		return "id"
 	}
 	
-	public convenience init(feed: [RealmFeedImage], timestamp: Date) {
+	convenience init(feed: [RealmFeedImage], timestamp: Date) {
 		self.init()
 		self.feed.append(objectsIn: feed)
 		self.timestamp = timestamp
 	}
 	
-	public func realmFeedtoLocals() throws -> [LocalFeedImage] {
+	func realmFeedtoLocals() throws -> [LocalFeedImage] {
 		try self.feed.map { try $0.toLocal() }
 	}
 }
