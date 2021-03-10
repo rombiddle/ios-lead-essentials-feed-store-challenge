@@ -8,6 +8,18 @@ import RealmSwift
 
 class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 	
+	override func setUp() {
+		super.setUp()
+		
+		setupEmptyStoreState()
+	}
+	
+	override func tearDown() {
+		super.tearDown()
+		
+		undoStoreSideEffects()
+	}
+	
 	//  ***********************
 	//
 	//  Follow the TDD process:
@@ -100,8 +112,28 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 		return sut
 	}
 	
-	private func testRealmConfiguration(readOnly: Bool = false) -> Realm.Configuration {
-		Realm.Configuration(inMemoryIdentifier: "\(type(of: self))Realm", readOnly: readOnly)
+	private func setupEmptyStoreState() {
+		deleteStoreArtifacts()
+	}
+	
+	private func undoStoreSideEffects() {
+		deleteStoreArtifacts()
+	}
+	
+	private func deleteStoreArtifacts() {
+		try? FileManager.default.removeItem(at: testSpecificStoreURL())
+	}
+	
+	private func testRealmConfiguration() -> Realm.Configuration {
+		Realm.Configuration(fileURL: testSpecificStoreURL())
+	}
+	
+	private func testSpecificStoreURL() -> URL {
+		return cachesDirectory().appendingPathComponent("\(type(of: self))RealmStore")
+	}
+	
+	private func cachesDirectory() -> URL {
+		return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
 	}
 			
 	private func cacheWithInvalidImage() -> RealmFeedCache {
@@ -149,14 +181,16 @@ extension FeedStoreChallengeTests: FailableRetrieveFeedStoreSpecs {
 extension FeedStoreChallengeTests: FailableInsertFeedStoreSpecs {
 
 	func test_insert_deliversErrorOnInsertionError() throws {
-		let conf = testRealmConfiguration(readOnly: true)
+		let invalidStoreURL = URL(string: "invalid://store-url")!
+		let conf = Realm.Configuration(fileURL: invalidStoreURL)
 		let sut = try makeSUT(configuration: conf)
 
 		assertThatInsertDeliversErrorOnInsertionError(on: sut)
 	}
 
 	func test_insert_hasNoSideEffectsOnInsertionError() throws {
-		let conf = testRealmConfiguration(readOnly: true)
+		let invalidStoreURL = URL(string: "invalid://store-url")!
+		let conf = Realm.Configuration(fileURL: invalidStoreURL)
 		let sut = try makeSUT(configuration: conf)
 
 		assertThatInsertHasNoSideEffectsOnInsertionError(on: sut)
@@ -167,14 +201,16 @@ extension FeedStoreChallengeTests: FailableInsertFeedStoreSpecs {
 extension FeedStoreChallengeTests: FailableDeleteFeedStoreSpecs {
 
 	func test_delete_deliversErrorOnDeletionError() throws {
-		let conf = testRealmConfiguration(readOnly: true)
+		let noDeletePermissionURL = cachesDirectory()
+		let conf = Realm.Configuration(fileURL: noDeletePermissionURL)
 		let sut = try makeSUT(configuration: conf)
 
 		assertThatDeleteDeliversErrorOnDeletionError(on: sut)
 	}
 
 	func test_delete_hasNoSideEffectsOnDeletionError() throws {
-		let conf = testRealmConfiguration(readOnly: true)
+		let noDeletePermissionURL = cachesDirectory()
+		let conf = Realm.Configuration(fileURL: noDeletePermissionURL)
 		let sut = try makeSUT(configuration: conf)
 
 		assertThatDeleteHasNoSideEffectsOnDeletionError(on: sut)
