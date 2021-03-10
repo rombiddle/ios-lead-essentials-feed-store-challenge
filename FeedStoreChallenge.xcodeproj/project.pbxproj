@@ -22,7 +22,7 @@
 		25253A8925F7EC990069485D /* RealmFeedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25253A8825F7EC990069485D /* RealmFeedStore.swift */; };
 		25253A8D25F7F0CC0069485D /* RealmFeedImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25253A8C25F7F0CC0069485D /* RealmFeedImage.swift */; };
 		25253A9125F7F0ED0069485D /* RealmFeedCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25253A9025F7F0ED0069485D /* RealmFeedCache.swift */; };
-		25253A9C25F800860069485D /* XCTestCase+MemoryLeakTracking.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25253A9B25F800860069485D /* XCTestCase+MemoryLeakTracking.swift */; };
+		25253A9C25F800860069485D /* XCTestCaseHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25253A9B25F800860069485D /* XCTestCaseHelpers.swift */; };
 		B0DF24754D3107387DD8A21D /* Pods_FeedStore_FeedStoreChallenge.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 98816F714FC1F4347B039A49 /* Pods_FeedStore_FeedStoreChallenge.framework */; };
 /* End PBXBuildFile section */
 
@@ -54,7 +54,7 @@
 		25253A8825F7EC990069485D /* RealmFeedStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmFeedStore.swift; sourceTree = "<group>"; };
 		25253A8C25F7F0CC0069485D /* RealmFeedImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmFeedImage.swift; sourceTree = "<group>"; };
 		25253A9025F7F0ED0069485D /* RealmFeedCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmFeedCache.swift; sourceTree = "<group>"; };
-		25253A9B25F800860069485D /* XCTestCase+MemoryLeakTracking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+MemoryLeakTracking.swift"; sourceTree = "<group>"; };
+		25253A9B25F800860069485D /* XCTestCaseHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCTestCaseHelpers.swift; sourceTree = "<group>"; };
 		259ECD3C25E6851000E3F4BA /* RealmSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		259ECD4125E6855200E3F4BA /* Realm.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Realm.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		259ECD4225E6855200E3F4BA /* RealmSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RealmSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -151,7 +151,7 @@
 		25253A9A25F7F4C20069485D /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				25253A9B25F800860069485D /* XCTestCase+MemoryLeakTracking.swift */,
+				25253A9B25F800860069485D /* XCTestCaseHelpers.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -372,7 +372,7 @@
 			files = (
 				08CE2BB22285BCE700183A1B /* XCTestCase+FailableDeleteFeedStoreSpecs.swift in Sources */,
 				08CE2BB02285BCE700183A1B /* FeedStoreSpecs.swift in Sources */,
-				25253A9C25F800860069485D /* XCTestCase+MemoryLeakTracking.swift in Sources */,
+				25253A9C25F800860069485D /* XCTestCaseHelpers.swift in Sources */,
 				084BB13C24FE50A10091C705 /* FeedStoreIntegrationTests.swift in Sources */,
 				08CE2BB12285BCE700183A1B /* XCTestCase+FailableRetrieveFeedStoreSpecs.swift in Sources */,
 				08CE2BAF2285BCE700183A1B /* XCTestCase+FeedStoreSpecs.swift in Sources */,

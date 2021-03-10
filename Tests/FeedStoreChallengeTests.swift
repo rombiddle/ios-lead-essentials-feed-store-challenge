@@ -8,16 +8,16 @@ import RealmSwift
 
 class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 	
-	override func setUp() {
-		super.setUp()
+	override func setUpWithError() throws {
+		try super.setUpWithError()
 		
-		setupEmptyStoreState()
+		try setupEmptyStoreState()
 	}
 	
-	override func tearDown() {
-		super.tearDown()
+	override func tearDownWithError() throws {
+		try undoStoreSideEffects()
 		
-		undoStoreSideEffects()
+		try super.tearDownWithError()
 	}
 	
 	//  ***********************
@@ -112,28 +112,12 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 		return sut
 	}
 	
-	private func setupEmptyStoreState() {
+	private func setupEmptyStoreState() throws {
 		deleteStoreArtifacts()
 	}
 	
-	private func undoStoreSideEffects() {
+	private func undoStoreSideEffects() throws {
 		deleteStoreArtifacts()
-	}
-	
-	private func deleteStoreArtifacts() {
-		try? FileManager.default.removeItem(at: testSpecificStoreURL())
-	}
-	
-	private func testRealmConfiguration() -> Realm.Configuration {
-		Realm.Configuration(fileURL: testSpecificStoreURL())
-	}
-	
-	private func testSpecificStoreURL() -> URL {
-		return cachesDirectory().appendingPathComponent("\(type(of: self))RealmStore")
-	}
-	
-	private func cachesDirectory() -> URL {
-		return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
 	}
 			
 	private func cacheWithInvalidImage() -> RealmFeedCache {

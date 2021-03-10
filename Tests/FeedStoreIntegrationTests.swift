@@ -86,20 +86,4 @@ class FeedStoreIntegrationTests: XCTestCase {
 		deleteStoreArtifacts()
 	}
 	
-	private func deleteStoreArtifacts() {
-		try? FileManager.default.removeItem(at: testSpecificStoreURL())
-	}
-	
-	private func testRealmConfiguration() -> Realm.Configuration {
-		Realm.Configuration(fileURL: testSpecificStoreURL())
-	}
-		
-	private func testSpecificStoreURL() -> URL {
-		return cachesDirectory().appendingPathComponent("\(type(of: self))RealmStore")
-	}
-	
-	private func cachesDirectory() -> URL {
-		return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
-	}
-	
 }
