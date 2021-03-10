@@ -1,6 +1,0 @@
-framework module Pods_FeedStore_FeedStoreChallenge {
-  umbrella header "Pods-FeedStore-FeedStoreChallenge-umbrella.h"
-
-  export *
-  module * { export * }
-}
