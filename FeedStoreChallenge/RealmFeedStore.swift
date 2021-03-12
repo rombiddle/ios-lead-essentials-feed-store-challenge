@@ -65,10 +65,8 @@ public class RealmFeedStore: FeedStore {
 				} else {
 					completion(.empty)
 				}
-			} catch is RealmFeedImage.InvalidFeedImageData {
-				completion(.failure(RealmFeedImage.InvalidFeedImageData()))
 			} catch {
-				completion(.empty)
+				completion(.failure(error))
 			}
 		}
 	}
