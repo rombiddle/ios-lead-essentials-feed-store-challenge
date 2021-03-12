@@ -56,8 +56,11 @@ public class RealmFeedStore: FeedStore {
 	
 	public func retrieve(completion: @escaping RetrievalCompletion) {
 		queue.async {
+			guard let realm = try? Realm(configuration: self.configuration) else {
+				return completion(.empty)
+			}
+			
 			do {
-				let realm = try Realm(configuration: self.configuration)
 				let realmObject = realm.objects(RealmFeedCache.self).first
 				if let conf = realmObject {
 					let feed = try conf.realmFeedtoLocals()
