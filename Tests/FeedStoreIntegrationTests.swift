@@ -72,10 +72,18 @@ class FeedStoreIntegrationTests: XCTestCase {
 	
 	// - MARK: Helpers
 	
-	private func makeSUT(configuration: Realm.Configuration? = nil, file: StaticString = #filePath, line: UInt = #line) throws -> FeedStore {
-		let sut = RealmFeedStore(configuration: configuration ?? testRealmConfiguration())
+	private func makeSUT(file: StaticString = #filePath, line: UInt = #line) throws -> FeedStore {
+		let sut = RealmFeedStore(configuration: testRealmStoreURLConfiguration())
 		trackForMemoryLeaks(sut, file: file, line: line)
 		return sut
+	}
+	
+	private func testRealmStoreURLConfiguration() -> Realm.Configuration {
+		Realm.Configuration(fileURL: testSpecificStoreURL())
+	}
+	
+	private func testSpecificStoreURL() -> URL {
+		return cachesDirectory().appendingPathComponent("\(type(of: self))RealmStore")
 	}
 	
 	private func setupEmptyStoreState() throws {
@@ -84,6 +92,10 @@ class FeedStoreIntegrationTests: XCTestCase {
 	
 	private func undoStoreSideEffects() throws {
 		deleteStoreArtifacts()
+	}
+	
+	private func deleteStoreArtifacts() {
+		try? FileManager.default.removeItem(at: testSpecificStoreURL())
 	}
 	
 }

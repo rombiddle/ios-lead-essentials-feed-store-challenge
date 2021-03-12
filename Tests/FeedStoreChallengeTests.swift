@@ -8,18 +8,6 @@ import RealmSwift
 
 class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 	
-	override func setUpWithError() throws {
-		try super.setUpWithError()
-		
-		try setupEmptyStoreState()
-	}
-	
-	override func tearDownWithError() throws {
-		try undoStoreSideEffects()
-		
-		try super.tearDownWithError()
-	}
-	
 	//  ***********************
 	//
 	//  Follow the TDD process:
@@ -107,17 +95,13 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 	// - MARK: Helpers
 	
 	private func makeSUT(configuration: Realm.Configuration? = nil, file: StaticString = #filePath, line: UInt = #line) throws -> FeedStore {
-		let sut = RealmFeedStore(configuration: configuration ?? testRealmConfiguration())
+		let sut = RealmFeedStore(configuration: configuration ?? testRealmInMemoryConfiguration())
 		trackForMemoryLeaks(sut, file: file, line: line)
 		return sut
 	}
 	
-	private func setupEmptyStoreState() throws {
-		deleteStoreArtifacts()
-	}
-	
-	private func undoStoreSideEffects() throws {
-		deleteStoreArtifacts()
+	private func testRealmInMemoryConfiguration() -> Realm.Configuration {
+		Realm.Configuration(inMemoryIdentifier: "\(type(of: self))Realm")
 	}
 			
 	private func cacheWithInvalidImage() -> RealmFeedCache {
@@ -125,8 +109,8 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 		return RealmFeedCache(value: ["feed": [invalidImage], "timestamp": Date()])
 	}
 	
-	private func insertCacheWithInvalidImageIntoRealm() {
-		let realm = try! Realm(configuration: testRealmConfiguration())
+	private func insertCacheWithInvalidImageIntoRealm(configuration: Realm.Configuration) {
+		let realm = try! Realm(configuration: configuration)
 		
 		try! realm.write {
 			realm.add(cacheWithInvalidImage())
@@ -145,17 +129,19 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 extension FeedStoreChallengeTests: FailableRetrieveFeedStoreSpecs {
 
 	func test_retrieve_deliversFailureOnRetrievalError() throws {
-		let sut = try makeSUT()
+		let inMemoryConf = testRealmInMemoryConfiguration()
+		let sut = try makeSUT(configuration: inMemoryConf)
 		
-		insertCacheWithInvalidImageIntoRealm()
+		insertCacheWithInvalidImageIntoRealm(configuration: inMemoryConf)
 
 		assertThatRetrieveDeliversFailureOnRetrievalError(on: sut)
 	}
 
 	func test_retrieve_hasNoSideEffectsOnFailure() throws {
-		let sut = try makeSUT()
+		let inMemoryConf = testRealmInMemoryConfiguration()
+		let sut = try makeSUT(configuration: inMemoryConf)
 		
-		insertCacheWithInvalidImageIntoRealm()
+		insertCacheWithInvalidImageIntoRealm(configuration: inMemoryConf)
 
 		assertThatRetrieveHasNoSideEffectsOnFailure(on: sut)
 	}

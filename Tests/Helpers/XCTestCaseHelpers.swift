@@ -15,18 +15,6 @@ extension XCTestCase {
 			XCTAssertNil(instance, "Instance should have been deallocated. Potential memory leak.", file: file, line: line)
 		}
 	}
-	
-	func testSpecificStoreURL() -> URL {
-		return cachesDirectory().appendingPathComponent("\(type(of: self))RealmStore")
-	}
-	
-	func deleteStoreArtifacts() {
-		try? FileManager.default.removeItem(at: testSpecificStoreURL())
-	}
-
-	func testRealmConfiguration() -> Realm.Configuration {
-		Realm.Configuration(fileURL: testSpecificStoreURL())
-	}
 
 	func cachesDirectory() -> URL {
 		return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
