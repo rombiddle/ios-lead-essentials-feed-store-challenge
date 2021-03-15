@@ -8,6 +8,18 @@ import RealmSwift
 
 class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 	
+	override func setUpWithError() throws {
+		try super.setUpWithError()
+		
+		try setupEmptyStoreState()
+	}
+	
+	override func tearDownWithError() throws {
+		try undoStoreSideEffects()
+		
+		try super.tearDownWithError()
+	}
+	
 	//  ***********************
 	//
 	//  Follow the TDD process:
@@ -114,6 +126,22 @@ class FeedStoreChallengeTests: XCTestCase, FeedStoreSpecs {
 		
 		try! realm.write {
 			realm.add(cacheWithInvalidImage())
+		}
+	}
+	
+	private func setupEmptyStoreState() throws {
+		deleteStoreArtifacts()
+	}
+	
+	private func undoStoreSideEffects() throws {
+		deleteStoreArtifacts()
+	}
+	
+	private func deleteStoreArtifacts() {
+		let realm = try! Realm(configuration: testRealmInMemoryConfiguration())
+		
+		try! realm.write {
+			realm.deleteAll()
 		}
 	}
 }
